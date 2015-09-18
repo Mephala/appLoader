@@ -21,6 +21,7 @@ public class ProcessingFrame extends JFrame {
 			public void run() {
 				try {
 					ProcessingFrame frame = new ProcessingFrame();
+					ViewUtils.centralizeJFrame(frame);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();

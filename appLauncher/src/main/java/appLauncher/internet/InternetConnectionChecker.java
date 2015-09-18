@@ -9,11 +9,11 @@ public class InternetConnectionChecker {
 	 * 
 	 * @return
 	 */
-	public static boolean canConnectNecessaryUrlsOverInternet() {
+	public static boolean canConnectNecessaryUrlsOverInternet(int timeout) {
 		// check ip receiving first.
-		boolean ipCheck = InternetUtils.canConnectToUrlOverHttp("checkip.amazonaws.com");
-		boolean mobileGourmet1 = InternetUtils.canConnectToUrlOverHttp("mobile-gourmet.com");
-		boolean mobileGourmet2 = InternetUtils.canConnectToUrlOverHttp("hepsikelepir.net");
+		boolean ipCheck = InternetUtils.canConnectToUrlOverHttp("checkip.amazonaws.com",timeout);
+		boolean mobileGourmet1 = InternetUtils.canConnectToUrlOverHttp("mobile-gourmet.com",timeout);
+		boolean mobileGourmet2 = InternetUtils.canConnectToUrlOverHttp("hepsikelepir.net",timeout);
 		boolean mobileGourmet = mobileGourmet1 || mobileGourmet2;
 		return ipCheck && mobileGourmet;
 	}

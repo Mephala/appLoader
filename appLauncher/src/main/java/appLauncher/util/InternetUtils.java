@@ -13,14 +13,15 @@ public class InternetUtils {
 	 * boolean connectStatus = canConnectToUrlOverHttp("google.com") || canConnectToUrlOverHttp("46.196.100.145");
 	 * 
 	 * @param httoAddressOrIp
+	 * @param timeout 
 	 * @return
 	 */
-	public static boolean canConnectToUrlOverHttp(String httoAddressOrIp) {
+	public static boolean canConnectToUrlOverHttp(String httoAddressOrIp, int timeout) {
 		boolean canConnect = false;
 		Integer port = 80;
 		try {
 			Socket socket = new Socket();
-			socket.connect(new InetSocketAddress(httoAddressOrIp, port), 3000);
+			socket.connect(new InetSocketAddress(httoAddressOrIp, port), timeout);
 			socket.close();
 			canConnect = true;
 		} catch (Exception e) {
