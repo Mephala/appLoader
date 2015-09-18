@@ -1,0 +1,110 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.gokhanozg</groupId>
+  <artifactId>appLauncher</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  
+  
+  
+   <properties>
+  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <assemble.output.directory>\\abmfs001\BTOrtak\538\ÇKM\Gökhan\gwrmapideskapp\lastestVersion</assemble.output.directory>
+  </properties>
+  
+  
+  <build>
+  	<plugins>
+  		<plugin>
+  			<artifactId>maven-compiler-plugin</artifactId>
+  			<configuration>
+  				<target>1.7</target>
+  				<source>1.7</source>
+  			</configuration>
+  		</plugin>  		
+  		<plugin>
+	              <groupId>org.apache.maven.plugins</groupId>
+	              <artifactId>maven-compiler-plugin</artifactId>
+	              <version>3.0</version>
+	    </plugin>
+	            <plugin>
+	                <groupId>org.apache.maven.plugins</groupId>
+	                <artifactId>maven-surefire-plugin</artifactId>
+	                <version>2.12.4</version>
+	                <configuration>
+	                	<skipTests>true</skipTests>
+	                </configuration>
+	            </plugin> 
+	             <plugin>
+		          <artifactId>maven-assembly-plugin</artifactId>
+			       <configuration>
+			      	<archive>
+			          <manifest>
+			            <mainClass>gwrmapideskapp.main.Main</mainClass>
+			          </manifest>
+			        </archive>
+			        <descriptorRefs>
+			          <descriptorRef>jar-with-dependencies</descriptorRef>
+			        </descriptorRefs>
+			        <outputDirectory>${assemble.output.directory}</outputDirectory>
+			      </configuration>
+				</plugin>   	
+  	</plugins>  
+  </build>
+  
+  <dependencies>
+  
+  		<!-- 	UnitTest -->
+   
+   <dependency>
+		<groupId>com.googlecode.jmockit</groupId>
+		<artifactId>jmockit</artifactId>
+		<version>1.6</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>com.googlecode.jmockit</groupId>
+		<artifactId>jmockit-coverage</artifactId>
+		<version>0.999.26</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>junit</groupId>
+		<artifactId>junit</artifactId>
+		<version>4.11</version>
+	</dependency>
+	
+<!-- 	JSON -->
+
+	<dependency>
+		<groupId>org.codehaus.jackson</groupId>
+		<artifactId>jackson-mapper-asl</artifactId>
+		<version>1.9.13</version>
+	</dependency>
+	
+<!-- 	Exception Utils -->
+
+	<dependency>
+		<groupId>commons-lang</groupId>
+		<artifactId>commons-lang</artifactId>
+		<version>2.2</version>
+	</dependency>
+	
+	
+	<!-- 	Logging -->
+
+	<dependency>
+		<groupId>log4j</groupId>
+		<artifactId>log4j</artifactId>
+		<version>1.2.17</version>
+	</dependency>  	
+  
+  
+  
+  
+  </dependencies>
+  
+  
+  
+  
+</project>
