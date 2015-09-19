@@ -1,5 +1,7 @@
 package appLauncher.client;
 
+import javax.swing.JFrame;
+
 import org.apache.log4j.Logger;
 
 import appLauncher.AppLoaderException;
@@ -50,7 +52,7 @@ public class AppLoaderClient {
 		}
 	}
 
-	public static boolean login(String uname, String pw) throws AppLoaderException {
+	public static boolean login(String uname, String pw, JFrame frame) throws AppLoaderException {
 		PersistedConfiguration pc = new PersistedConfiguration();
 		pc.setPassword(pw);
 		pc.setUsername(uname);

@@ -131,7 +131,7 @@ public class LoginFrame extends JFrame {
 					Boolean saveCredentials = rememberCheckbox.isSelected();
 					if (Boolean.TRUE.equals(saveCredentials))
 						ConfigurationManager.getInstance().saveCredentials(uname, pw);
-					AppLoaderClient.login(uname, pw);
+					AppLoaderClient.login(uname, pw, loginFrame);
 					JOptionPane.showMessageDialog(null, "Login Success", "Success", JOptionPane.INFORMATION_MESSAGE);
 					// TODO Dispose and open AppLoaderFrame
 				} catch (Exception exc) {

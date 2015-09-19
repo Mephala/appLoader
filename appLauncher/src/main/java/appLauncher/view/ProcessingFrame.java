@@ -17,6 +17,12 @@ public class ProcessingFrame extends JFrame {
 	private static final long serialVersionUID = 6376313331420630844L;
 	private JPanel contentPane;
 
+	public JLabel getInformationLabel() {
+		return informationLabel;
+	}
+
+	private final JLabel informationLabel;
+
 	/**
 	 * Launch the application.
 	 */
@@ -38,7 +44,6 @@ public class ProcessingFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public ProcessingFrame() {
-		setTitle("Processing..."); // Generic frame for processing jobs.
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 226, 294);
 		contentPane = new JPanel();
@@ -51,9 +56,9 @@ public class ProcessingFrame extends JFrame {
 		lblNewLabel.setBounds(10, 11, 200, 211);
 		contentPane.add(lblNewLabel);
 
-		JLabel lblNewLabel_1 = new JLabel("New label");
-		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_1.setBounds(10, 242, 200, 14);
-		contentPane.add(lblNewLabel_1);
+		informationLabel = new JLabel("New label");
+		informationLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		informationLabel.setBounds(10, 242, 200, 14);
+		contentPane.add(informationLabel);
 	}
 }
