@@ -98,8 +98,37 @@
 		<artifactId>log4j</artifactId>
 		<version>1.2.17</version>
 	</dependency>  	
+	
+<!-- 	Base64 -->
+	  <dependency>
+		<groupId>commons-codec</groupId>
+		<artifactId>commons-codec</artifactId>
+		<version>1.9</version>
+	</dependency>
+	
+	
+<!-- 	JSON -->
   
-  
+  	<dependency>
+		<groupId>org.codehaus.jackson</groupId>
+		<artifactId>jackson-core-asl</artifactId>
+		<version>1.9.13</version>
+	</dependency>
+	
+<!-- 	FileUtils -->
+  	
+  	<dependency>
+		<groupId>org.apache.commons</groupId>
+		<artifactId>commons-io</artifactId>
+		<version>1.3.2</version>
+	</dependency>
+	
+<!-- 	SPClient -->
+  	<dependency>
+			<groupId>service-provider</groupId>
+			<artifactId>service-provider-client</artifactId>
+			<version>0.0.1-SNAPSHOT</version>		
+	</dependency>
   
   
   </dependencies>
