@@ -34,7 +34,7 @@ public class ProcessingFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public ProcessingFrame() {
-		setTitle("Processing...");
+		setTitle("Processing..."); // Generic frame for processing jobs.
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 226, 294);
 		contentPane = new JPanel();
