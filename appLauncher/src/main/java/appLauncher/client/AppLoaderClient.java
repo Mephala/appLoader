@@ -4,8 +4,6 @@ import javax.swing.JFrame;
 
 import org.apache.log4j.Logger;
 
-import appLauncher.AppLoaderException;
-import appLauncher.conf.PersistedConfiguration;
 import service.provider.client.executor.ServiceClient;
 import service.provider.common.core.RequestApplication;
 import service.provider.common.core.ResponseStatus;
@@ -14,11 +12,13 @@ import service.provider.common.dto.SPApplicationUserDto;
 import service.provider.common.request.RequestDtoFactory;
 import service.provider.common.request.SPApplicationRequestDto;
 import service.provider.common.response.SPApplicationResponseDto;
+import appLauncher.AppLoaderException;
+import appLauncher.conf.PersistedConfiguration;
 
 public class AppLoaderClient {
 
 	static {
-		ServiceClient.initialize("http://localhost:8080"); // For local testing.
+		ServiceClient.initialize("http://localhost:8082"); // For local testing.
 	}
 
 	private static final Logger logger = Logger.getLogger(AppLoaderClient.class);
@@ -43,7 +43,7 @@ public class AppLoaderClient {
 				logger.info("User login success. Login process took " + (System.currentTimeMillis() - start) + " ms.");
 				return true;
 			}
-			throw new AppLoaderException("Failed to login server. Details:" + response.getError());
+			return false;
 		} catch (AppLoaderException ae) {
 			return false;
 		} catch (Exception e) {
