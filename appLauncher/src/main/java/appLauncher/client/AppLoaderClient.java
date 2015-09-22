@@ -14,6 +14,7 @@ import service.provider.common.request.SPApplicationRequestDto;
 import service.provider.common.response.SPApplicationResponseDto;
 import appLauncher.AppLoaderException;
 import appLauncher.conf.PersistedConfiguration;
+import appLauncher.conf.UserSession;
 
 public class AppLoaderClient {
 
@@ -41,6 +42,8 @@ public class AppLoaderClient {
 				throw new AppLoaderException("Failed to login server. Server did not respond.");
 			if (ResponseStatus.OK.equals(response.getResponseStatus())) {
 				logger.info("User login success. Login process took " + (System.currentTimeMillis() - start) + " ms.");
+				UserSession us = UserSession.getInstance();
+				us.setUserEligibleApps(response.getEligibleApplications());
 				return true;
 			}
 			return false;

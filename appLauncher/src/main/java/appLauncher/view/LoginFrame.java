@@ -3,6 +3,9 @@ package appLauncher.view;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -15,9 +18,16 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.log4j.Logger;
+
+import service.provider.common.request.SPApplicationDto;
+import service.provider.common.util.CommonUtils;
 import appLauncher.client.AppLoaderClient;
 import appLauncher.conf.ConfigurationManager;
 import appLauncher.conf.PersistedConfiguration;
+import appLauncher.conf.UserSession;
+import appLauncher.downloader.Loader;
+import appLauncher.internet.ApplicationUpdateChecker;
 import appLauncher.internet.InternetConnectionChecker;
 
 public class LoginFrame extends JFrame {
@@ -33,6 +43,8 @@ public class LoginFrame extends JFrame {
 	private final static int CONNECTION_TIMEOUT = 3000;
 	private JFrame loginFrame = this;
 	private final JButton loginButton;
+	private final static long APP_CHECK_TIMEOUT = 20000l;
+	private static Logger logger = Logger.getLogger(LoginFrame.class);
 
 	/**
 	 * Launch the application.
@@ -59,8 +71,23 @@ public class LoginFrame extends JFrame {
 									JOptionPane.INFORMATION_MESSAGE);
 							constructLoginFrame();
 						} else {
-							JOptionPane.showMessageDialog(null, "Login success", "Success", JOptionPane.INFORMATION_MESSAGE);
-							// TODO dispose and open AppLoaderFrame.
+							ProcessingFrame frame = new ProcessingFrame();
+							ViewUtils.centralizeJFrame(frame);
+							frame.setVisible(true);
+							List<String> toBeDownloadedAppList = calculateDownloadRequirement();
+							frame.setVisible(false);
+							frame.dispose();
+
+							if (!CommonUtils.isEmpty(toBeDownloadedAppList)) {
+								for (String app : toBeDownloadedAppList) {
+									String args[] = new String[2];
+									args[0] = app;
+									// args[1] = ServiceClient.getServerUrl();
+									args[1] = "http://localhost:8082/";
+									Loader.main(args);
+								}
+							}
+							// TODO Construct app selector frame
 						}
 					} else {
 						constructLoginFrame();
@@ -68,6 +95,32 @@ public class LoginFrame extends JFrame {
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(null, "Failed to construct Login frame. Details:" + e.getMessage(), "Login Frame Failure", JOptionPane.ERROR_MESSAGE);
 				}
+			}
+
+			private List<String> calculateDownloadRequirement() throws InterruptedException {
+				logger.info("Calculating md5 of the pre-downloaded list.");
+				// Check for md5 List.
+				ApplicationUpdateChecker applicationUpdateChecker = new ApplicationUpdateChecker();
+				applicationUpdateChecker.start();
+
+				applicationUpdateChecker.join(APP_CHECK_TIMEOUT);
+				Map<String, String> currentMd5Map = applicationUpdateChecker.getMD5Map();
+				UserSession us = UserSession.getInstance();
+				List<String> toBeDownlaoded = new ArrayList<String>();
+				List<SPApplicationDto> userApps = us.getUserEligibleApps();
+				if (userApps == null)
+					return toBeDownlaoded;
+				for (SPApplicationDto appDto : userApps) {
+					String name = appDto.getName();
+					if (currentMd5Map.containsKey(name)) {
+						String currentMd5 = currentMd5Map.get(name);
+						String servermd5 = appDto.getMd5();
+						if (!servermd5.equals(currentMd5))
+							toBeDownlaoded.add(name);
+					} else
+						toBeDownlaoded.add(name);
+				}
+				return toBeDownlaoded;
 			}
 
 			private void constructLoginFrame() {

@@ -1,10 +1,13 @@
 package appLauncher.conf;
 
+import java.util.List;
+
 public class PersistedConfiguration {
 
 	private String username;
 	private String password;
 	private Boolean saveConfiguration;
+	private List<String> downloadedApplications;
 
 	public PersistedConfiguration() {
 
@@ -69,6 +72,14 @@ public class PersistedConfiguration {
 
 	public void setSaveConfiguration(Boolean saveConfiguration) {
 		this.saveConfiguration = saveConfiguration;
+	}
+
+	public List<String> getDownloadedApplications() {
+		return downloadedApplications;
+	}
+
+	public void setDownloadedApplications(List<String> downloadedApplications) {
+		this.downloadedApplications = downloadedApplications;
 	}
 
 }
