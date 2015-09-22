@@ -71,7 +71,7 @@ public class LoginFrame extends JFrame {
 									JOptionPane.INFORMATION_MESSAGE);
 							constructLoginFrame();
 						} else {
-							ProcessingFrame frame = new ProcessingFrame(); // very large.
+							ProcessingFrame frame = new ProcessingFrame(); // very large. Very dark.
 							ViewUtils.centralizeJFrame(frame);
 							frame.setVisible(true);
 							List<String> toBeDownloadedAppList = calculateDownloadRequirement();
