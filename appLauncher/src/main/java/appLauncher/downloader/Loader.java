@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -13,9 +12,9 @@ import java.util.concurrent.Future;
 
 import javax.swing.JOptionPane;
 
-import service.provider.client.executor.ServiceClient;
 import appLauncher.view.LauncherView;
 import appLauncher.view.LoadingData;
+import service.provider.client.executor.ServiceClient;
 
 public class Loader {
 
@@ -24,7 +23,6 @@ public class Loader {
 			final LauncherView launcherView;
 			String appName = args[0];
 			String serverBaseUrl = args[1];
-			ServiceClient.initialize(serverBaseUrl);
 			try {
 				ExecutorService executor = Executors.newCachedThreadPool();
 				final LoadingData loadingData = LoadingData.constructLoadingData();
@@ -46,9 +44,8 @@ public class Loader {
 						loadingData.setTotalData(totalData);
 						loadingData.getDownloadStarted().set(true);
 						loadingData.setInfo("Connected. Downloading updates...");
-						final String fileName = UUID.randomUUID().toString() + ".jar";
-						String serverUrl = ServiceClient.getServerUrl();
-						URL link = new URL(serverUrl + appName + "/downloadFile.do");
+						final String fileName = appName;
+						URL link = new URL(serverBaseUrl + appName + "/downloadFile.do");
 						InputStream in = new BufferedInputStream(link.openStream());
 						ByteArrayOutputStream out = new ByteArrayOutputStream();
 						byte[] buf = new byte[1024];
@@ -68,10 +65,12 @@ public class Loader {
 						FileOutputStream fos = new FileOutputStream(fileName);
 						fos.write(response);
 						fos.close();
-						// Executors.newCachedThreadPool().submit(new Runnable() {
+						// Executors.newCachedThreadPool().submit(new Runnable()
+						// {
 						// public void run() {
 						// try {
-						// Runtime.getRuntime().exec("java -jar " + fileName + " " + fileName);
+						// Runtime.getRuntime().exec("java -jar " + fileName + "
+						// " + fileName);
 						// } catch (IOException e) {
 						// JOptionPane.showMessageDialog(null, "Reeskont");
 						// }
@@ -80,20 +79,19 @@ public class Loader {
 						launcherView.setVisible(false);
 						launcherView.dispose();
 					} else {
-						JOptionPane.showMessageDialog(null, "Error occured during loader window startup. Error message:" + startupResult.error
-								+ ". Contact to Gökhan Özgözen: gokhan.ozgozen@gmail.com", "HATA!!!!", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null,
+								"Error occured during loader window startup. Error message:" + startupResult.error + ". Contact to Gökhan Özgözen: gokhan.ozgozen@gmail.com",
+								"HATA!!!!", JOptionPane.ERROR_MESSAGE);
 						System.exit(-1);
 					}
 				} else {
-					JOptionPane.showMessageDialog(null, "Connection failure. Either you are offline or the servers are down. Contact to Gökhan Özgözen: gokhan.ozgozen@gmail.com", "HATA!!!!",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Connection failure. Either you are offline or the servers are down. Contact to Gökhan Özgözen: gokhan.ozgozen@gmail.com",
+							"HATA!!!!", JOptionPane.ERROR_MESSAGE);
 					System.exit(-1);
 				}
 			} catch (Exception e) {
 				JOptionPane.showMessageDialog(null, e.getMessage(), "HATA!!!!", JOptionPane.ERROR_MESSAGE);
 				System.exit(-1);
-			} finally {
-				System.exit(0);
 			}
 		} else {
 			throw new IllegalArgumentException("Wrong checkpoint.");

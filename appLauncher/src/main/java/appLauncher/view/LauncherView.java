@@ -19,15 +19,16 @@ public class LauncherView extends JFrame {
 	private final JProgressBar progressBar;
 	private final JLabel progressLabel;
 
-	public LauncherView(LoadingData loadingData) throws InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
+	public LauncherView(LoadingData loadingData)
+			throws InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
 		this.launcherView = this;
 		this.loadingData = loadingData;
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
-		this.setTitle("Politically Connected App Loader  ---- Gökhan Özgözen");
-		this.setSize(700, 400);
+		this.setTitle("App Updater  ---- Gökhan Özgözen");
+		this.setSize(642, 58);
 		JPanel panel = new JPanel();
-		this.add(panel);
+		getContentPane().add(panel);
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		progressBar = new JProgressBar(0, 100);
 		progressLabel = new JLabel();

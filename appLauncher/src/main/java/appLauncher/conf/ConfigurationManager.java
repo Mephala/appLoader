@@ -9,8 +9,8 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import service.provider.common.util.CommonUtils;
 import appLauncher.AppLoaderException;
+import service.provider.common.util.CommonUtils;
 
 public class ConfigurationManager {
 
@@ -71,6 +71,24 @@ public class ConfigurationManager {
 			confFile.delete();
 		String encryptPc = CommonUtils.encryptStringAES(serializedPc, PK);
 		FileUtils.writeStringToFile(confFile, encryptPc, "UTF-8");
+	}
+
+	public void saveConfiguration(PersistedConfiguration pc) throws AppLoaderException {
+		long start = System.currentTimeMillis();
+		try {
+			File confFile = new File(CONF_FILE);
+			if (confFile.exists()) {
+				confFile.delete();
+
+			}
+			String confAsString = OM.writeValueAsString(pc);
+			String confDecrypted = CommonUtils.encryptStringAES(confAsString, PK);
+			FileUtils.writeStringToFile(confFile, confDecrypted);
+			logger.info("Finished initializing Configuration Manager in " + (System.currentTimeMillis() - start) + " ms.");
+		} catch (Exception e) {
+			throw new AppLoaderException(e, "Failed to save  configurations...");
+		}
+
 	}
 
 }

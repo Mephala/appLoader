@@ -20,8 +20,6 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.log4j.Logger;
 
-import service.provider.common.request.SPApplicationDto;
-import service.provider.common.util.CommonUtils;
 import appLauncher.client.AppLoaderClient;
 import appLauncher.conf.ConfigurationManager;
 import appLauncher.conf.PersistedConfiguration;
@@ -29,6 +27,8 @@ import appLauncher.conf.UserSession;
 import appLauncher.downloader.Loader;
 import appLauncher.internet.ApplicationUpdateChecker;
 import appLauncher.internet.InternetConnectionChecker;
+import service.provider.common.request.SPApplicationDto;
+import service.provider.common.util.CommonUtils;
 
 public class LoginFrame extends JFrame {
 
@@ -71,7 +71,10 @@ public class LoginFrame extends JFrame {
 									JOptionPane.INFORMATION_MESSAGE);
 							constructLoginFrame();
 						} else {
-							ProcessingFrame frame = new ProcessingFrame(); // very large. Very dark.
+							ProcessingFrame frame = new ProcessingFrame(); // very
+																			// large.
+																			// Very
+																			// dark.
 							ViewUtils.centralizeJFrame(frame);
 							frame.setVisible(true);
 							List<String> toBeDownloadedAppList = calculateDownloadRequirement();
@@ -83,11 +86,13 @@ public class LoginFrame extends JFrame {
 									String args[] = new String[2];
 									args[0] = app;
 									// args[1] = ServiceClient.getServerUrl();
-									args[1] = "http://localhost:8082/";
+									args[1] = "http://localhost:8080/";
 									Loader.main(args);
 								}
+								pc.setDownloadedApplications(toBeDownloadedAppList);
+								ConfigurationManager.getInstance().saveConfiguration(pc);
 							}
-							// TODO Construct app selector frame
+							AppSelectorFrame.main(null);
 						}
 					} else {
 						constructLoginFrame();
