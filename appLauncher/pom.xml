@@ -40,7 +40,7 @@
 			       <configuration>
 			      	<archive>
 			          <manifest>
-			            <mainClass>gwrmapideskapp.main.Main</mainClass>
+			            <mainClass>appLauncher.view.LoginFrame</mainClass>
 			          </manifest>
 			        </archive>
 			        <descriptorRefs>

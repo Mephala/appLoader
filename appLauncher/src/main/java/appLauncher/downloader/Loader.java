@@ -56,8 +56,6 @@ public class Loader {
 							loadingData.setProcessedData(processData);
 							out.write(buf, 0, n);
 							processData += 1024;
-							Thread.sleep(25);
-							System.out.println("+25");
 						}
 						loadingData.setInfo("App is downloaded successfully.");
 						loadingData.setProcessedData(totalData);

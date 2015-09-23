@@ -117,7 +117,12 @@ public class LoginFrame extends JFrame {
 		Map<String, String> currentMd5Map = applicationUpdateChecker.getMD5Map();
 		UserSession us = UserSession.getInstance();
 		List<String> userAppNames = ConfigurationManager.getInstance().getPc().getDownloadedApplications();
-		userAppNames.clear();
+		if (userAppNames == null) {
+			userAppNames = new ArrayList<String>();
+			ConfigurationManager.getInstance().getPc().setDownloadedApplications(userAppNames);
+		} else {
+			userAppNames.clear();
+		}
 		List<String> toBeDownlaoded = new ArrayList<String>();
 		List<SPApplicationDto> userApps = us.getUserEligibleApps();
 		if (userApps == null)
