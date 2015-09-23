@@ -48,7 +48,7 @@ public class ProcessingFrame extends JFrame {
 	public ProcessingFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
-		setBounds(100, 100, 218, 294);
+		setBounds(100, 100, 227, 294);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -59,7 +59,7 @@ public class ProcessingFrame extends JFrame {
 		lblNewLabel.setBounds(10, 11, 200, 211);
 		contentPane.add(lblNewLabel);
 
-		informationLabel = new JLabel("Updating Applications...");
+		informationLabel = new JLabel("Checking application status...");
 		informationLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		informationLabel.setBounds(10, 242, 200, 14);
 		contentPane.add(informationLabel);
