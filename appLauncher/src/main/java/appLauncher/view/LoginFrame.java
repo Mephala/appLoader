@@ -3,6 +3,7 @@ package appLauncher.view;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -70,33 +71,7 @@ public class LoginFrame extends JFrame {
 					JOptionPane.showMessageDialog(null, "Failed to login server with previous credentials. Please re-enter your credentials..", "Login Failure", JOptionPane.INFORMATION_MESSAGE);
 					constructLoginFrame();
 				} else {
-
-					EventQueue.invokeAndWait(new Runnable() {
-						@Override
-						public void run() {
-							pf = new ProcessingFrame();
-							ViewUtils.centralizeJFrame(pf);
-							pf.setVisible(true);
-						}
-					});
-
-					List<String> toBeDownloadedAppList = calculateDownloadRequirement();
-					if (pf != null) {
-						pf.setVisible(false);
-						pf.dispose();
-					}
-
-					if (!CommonUtils.isEmpty(toBeDownloadedAppList)) {
-						for (String app : toBeDownloadedAppList) {
-							final String loaderArgs[] = new String[2];
-							loaderArgs[0] = app;
-							// args[1] = ServiceClient.getServerUrl();
-							loaderArgs[1] = "http://localhost:8082/";
-							Loader.main(loaderArgs);
-						}
-
-					}
-					AppSelectorFrame.main(null);
+					startPostLoginProcess();
 				}
 			} else {
 				constructLoginFrame();
@@ -105,6 +80,51 @@ public class LoginFrame extends JFrame {
 			logger.error("Class construction exception", e);
 		}
 
+	}
+
+	private static void startPostLoginAsync() {
+		Thread t = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					startPostLoginProcess();
+				} catch (InvocationTargetException | InterruptedException | AppLoaderException e) {
+					logger.error("Failed.", e);
+				}
+
+			}
+		});
+		t.start();
+	}
+
+	private static void startPostLoginProcess() throws InterruptedException, InvocationTargetException, AppLoaderException {
+		EventQueue.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+				pf = new ProcessingFrame();
+				ViewUtils.centralizeJFrame(pf);
+				pf.setVisible(true);
+			}
+		});
+
+		List<String> toBeDownloadedAppList = calculateDownloadRequirement();
+		if (pf != null) {
+			pf.setVisible(false);
+			pf.dispose();
+		}
+
+		if (!CommonUtils.isEmpty(toBeDownloadedAppList)) {
+			for (String app : toBeDownloadedAppList) {
+				final String loaderArgs[] = new String[2];
+				loaderArgs[0] = app;
+				// args[1] = ServiceClient.getServerUrl();
+				loaderArgs[1] = "http://localhost:8082/";
+				Loader.main(loaderArgs);
+			}
+
+		}
+		AppSelectorFrame.main(null);
 	}
 
 	private static List<String> calculateDownloadRequirement() throws InterruptedException, AppLoaderException {
@@ -209,7 +229,9 @@ public class LoginFrame extends JFrame {
 						ConfigurationManager.getInstance().saveCredentials(uname, pw);
 					AppLoaderClient.login(uname, pw, loginFrame);
 					JOptionPane.showMessageDialog(null, "Login Success", "Success", JOptionPane.INFORMATION_MESSAGE);
-					// TODO Dispose and open AppLoaderFrame
+					loginFrame.setVisible(false);
+					loginFrame.dispose();
+					startPostLoginAsync();
 				} catch (Exception exc) {
 					JOptionPane.showMessageDialog(null, "Failed to login.Reason:" + exc.getMessage(), "Login Failure", JOptionPane.ERROR_MESSAGE);
 				} finally {
