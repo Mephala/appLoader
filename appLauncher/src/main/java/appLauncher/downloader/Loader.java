@@ -12,9 +12,9 @@ import java.util.concurrent.Future;
 
 import javax.swing.JOptionPane;
 
+import service.provider.client.executor.ServiceClient;
 import appLauncher.view.LauncherView;
 import appLauncher.view.LoadingData;
-import service.provider.client.executor.ServiceClient;
 
 public class Loader {
 
@@ -56,6 +56,8 @@ public class Loader {
 							loadingData.setProcessedData(processData);
 							out.write(buf, 0, n);
 							processData += 1024;
+							Thread.sleep(25);
+							System.out.println("+25");
 						}
 						loadingData.setInfo("App is downloaded successfully.");
 						loadingData.setProcessedData(totalData);
@@ -79,17 +81,17 @@ public class Loader {
 						launcherView.setVisible(false);
 						launcherView.dispose();
 					} else {
-						JOptionPane.showMessageDialog(null,
-								"Error occured during loader window startup. Error message:" + startupResult.error + ". Contact to Gökhan Özgözen: gokhan.ozgozen@gmail.com",
-								"HATA!!!!", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Error occured during loader window startup. Error message:" + startupResult.error
+								+ ". Contact to Gökhan Özgözen: gokhan.ozgozen@gmail.com", "HATA!!!!", JOptionPane.ERROR_MESSAGE);
 						System.exit(-1);
 					}
 				} else {
-					JOptionPane.showMessageDialog(null, "Connection failure. Either you are offline or the servers are down. Contact to Gökhan Özgözen: gokhan.ozgozen@gmail.com",
-							"HATA!!!!", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Connection failure. Either you are offline or the servers are down. Contact to Gökhan Özgözen: gokhan.ozgozen@gmail.com", "HATA!!!!",
+							JOptionPane.ERROR_MESSAGE);
 					System.exit(-1);
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				JOptionPane.showMessageDialog(null, e.getMessage(), "HATA!!!!", JOptionPane.ERROR_MESSAGE);
 				System.exit(-1);
 			}

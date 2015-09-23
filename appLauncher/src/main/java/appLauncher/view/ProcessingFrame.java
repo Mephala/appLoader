@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
 public class ProcessingFrame extends JFrame {
@@ -30,6 +31,7 @@ public class ProcessingFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 					ProcessingFrame frame = new ProcessingFrame();
 					ViewUtils.centralizeJFrame(frame);
 					frame.setVisible(true);
@@ -46,7 +48,6 @@ public class ProcessingFrame extends JFrame {
 	public ProcessingFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
-		setUndecorated(true);
 		setBounds(100, 100, 218, 294);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

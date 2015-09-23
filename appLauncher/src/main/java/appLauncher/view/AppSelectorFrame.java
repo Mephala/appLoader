@@ -65,7 +65,8 @@ public class AppSelectorFrame extends JFrame {
 				try {
 					frame.setVisible(false);
 					Process p = pb.start();
-					p.waitFor();
+					int exitValue = p.waitFor();
+					System.out.println(exitValue);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

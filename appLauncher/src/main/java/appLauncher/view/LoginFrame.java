@@ -20,6 +20,9 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.log4j.Logger;
 
+import service.provider.common.request.SPApplicationDto;
+import service.provider.common.util.CommonUtils;
+import appLauncher.AppLoaderException;
 import appLauncher.client.AppLoaderClient;
 import appLauncher.conf.ConfigurationManager;
 import appLauncher.conf.PersistedConfiguration;
@@ -27,8 +30,6 @@ import appLauncher.conf.UserSession;
 import appLauncher.downloader.Loader;
 import appLauncher.internet.ApplicationUpdateChecker;
 import appLauncher.internet.InternetConnectionChecker;
-import service.provider.common.request.SPApplicationDto;
-import service.provider.common.util.CommonUtils;
 
 public class LoginFrame extends JFrame {
 
@@ -45,90 +46,102 @@ public class LoginFrame extends JFrame {
 	private final JButton loginButton;
 	private final static long APP_CHECK_TIMEOUT = 20000l;
 	private static Logger logger = Logger.getLogger(LoginFrame.class);
+	private static ProcessingFrame pf;
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					// Set look and feel first.
-					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-					if (!InternetConnectionChecker.canConnectNecessaryUrlsOverInternet(CONNECTION_TIMEOUT)) {
-						JOptionPane.showMessageDialog(null, "Failed to connect Internet to retrieve necessary data", "INTERNET CONNECTION FAILURE", JOptionPane.ERROR_MESSAGE);
-						System.exit(0);
-					}
-					// Construct configurations...
-					ConfigurationManager.construct();
 
-					// Login if user wants his credentials to be remembered.
-					PersistedConfiguration pc = ConfigurationManager.getInstance().getPc();
-					if (pc != null) {
-						boolean userLoginSuccess = AppLoaderClient.login(pc);
-						if (!userLoginSuccess) {
-							JOptionPane.showMessageDialog(null, "Failed to login server with previous credentials. Please re-enter your credentials..", "Login Failure",
-									JOptionPane.INFORMATION_MESSAGE);
-							constructLoginFrame();
-						} else {
-							ProcessingFrame frame = new ProcessingFrame(); // very
-																			// large.
-																			// Very
-																			// dark.
-							ViewUtils.centralizeJFrame(frame);
-							frame.setVisible(true);
-							List<String> toBeDownloadedAppList = calculateDownloadRequirement();
-							frame.setVisible(false);
-							frame.dispose();
+		try {
+			// Set look and feel first.
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			if (!InternetConnectionChecker.canConnectNecessaryUrlsOverInternet(CONNECTION_TIMEOUT)) {
+				JOptionPane.showMessageDialog(null, "Failed to connect Internet to retrieve necessary data", "INTERNET CONNECTION FAILURE", JOptionPane.ERROR_MESSAGE);
+				System.exit(0);
+			}
+			// Construct configurations...
+			ConfigurationManager.construct();
+			// Login if user wants his credentials to be remembered.
+			PersistedConfiguration pc = ConfigurationManager.getInstance().getPc();
+			if (pc != null) {
+				boolean userLoginSuccess = AppLoaderClient.login(pc);
+				if (!userLoginSuccess) {
+					JOptionPane.showMessageDialog(null, "Failed to login server with previous credentials. Please re-enter your credentials..", "Login Failure", JOptionPane.INFORMATION_MESSAGE);
+					constructLoginFrame();
+				} else {
 
-							if (!CommonUtils.isEmpty(toBeDownloadedAppList)) {
-								for (String app : toBeDownloadedAppList) {
-									String args[] = new String[2];
-									args[0] = app;
-									// args[1] = ServiceClient.getServerUrl();
-									args[1] = "http://localhost:8080/";
-									Loader.main(args);
-								}
-								pc.setDownloadedApplications(toBeDownloadedAppList);
-								ConfigurationManager.getInstance().saveConfiguration(pc);
-							}
-							AppSelectorFrame.main(null);
+					EventQueue.invokeAndWait(new Runnable() {
+						@Override
+						public void run() {
+							pf = new ProcessingFrame();
+							ViewUtils.centralizeJFrame(pf);
+							pf.setVisible(true);
 						}
-					} else {
-						constructLoginFrame();
+					});
+
+					List<String> toBeDownloadedAppList = calculateDownloadRequirement();
+					if (pf != null) {
+						pf.setVisible(false);
+						pf.dispose();
 					}
-				} catch (Exception e) {
-					JOptionPane.showMessageDialog(null, "Failed to construct Login frame. Details:" + e.getMessage(), "Login Frame Failure", JOptionPane.ERROR_MESSAGE);
+
+					if (!CommonUtils.isEmpty(toBeDownloadedAppList)) {
+						for (String app : toBeDownloadedAppList) {
+							final String loaderArgs[] = new String[2];
+							loaderArgs[0] = app;
+							// args[1] = ServiceClient.getServerUrl();
+							loaderArgs[1] = "http://localhost:8082/";
+							Loader.main(loaderArgs);
+						}
+
+					}
+					AppSelectorFrame.main(null);
 				}
+			} else {
+				constructLoginFrame();
 			}
+		} catch (Exception e) {
+			logger.error("Class construction exception", e);
+		}
 
-			private List<String> calculateDownloadRequirement() throws InterruptedException {
-				logger.info("Calculating md5 of the pre-downloaded list.");
-				// Check for md5 List.
-				ApplicationUpdateChecker applicationUpdateChecker = new ApplicationUpdateChecker();
-				applicationUpdateChecker.start();
+	}
 
-				applicationUpdateChecker.join(APP_CHECK_TIMEOUT);
-				Map<String, String> currentMd5Map = applicationUpdateChecker.getMD5Map();
-				UserSession us = UserSession.getInstance();
-				List<String> toBeDownlaoded = new ArrayList<String>();
-				List<SPApplicationDto> userApps = us.getUserEligibleApps();
-				if (userApps == null)
-					return toBeDownlaoded;
-				for (SPApplicationDto appDto : userApps) {
-					String name = appDto.getName();
-					if (currentMd5Map.containsKey(name)) {
-						String currentMd5 = currentMd5Map.get(name);
-						String servermd5 = appDto.getMd5();
-						if (!servermd5.equals(currentMd5))
-							toBeDownlaoded.add(name);
-					} else
-						toBeDownlaoded.add(name);
-				}
-				return toBeDownlaoded;
-			}
+	private static List<String> calculateDownloadRequirement() throws InterruptedException, AppLoaderException {
+		logger.info("Calculating md5 of the pre-downloaded list.");
+		// Check for md5 List.
+		ApplicationUpdateChecker applicationUpdateChecker = new ApplicationUpdateChecker();
+		applicationUpdateChecker.start();
 
-			private void constructLoginFrame() {
+		applicationUpdateChecker.join(APP_CHECK_TIMEOUT);
+		Map<String, String> currentMd5Map = applicationUpdateChecker.getMD5Map();
+		UserSession us = UserSession.getInstance();
+		List<String> userAppNames = ConfigurationManager.getInstance().getPc().getDownloadedApplications();
+		userAppNames.clear();
+		List<String> toBeDownlaoded = new ArrayList<String>();
+		List<SPApplicationDto> userApps = us.getUserEligibleApps();
+		if (userApps == null)
+			return toBeDownlaoded;
+		for (SPApplicationDto appDto : userApps) {
+			String name = appDto.getName();
+			userAppNames.add(name);
+			if (currentMd5Map.containsKey(name)) {
+				String currentMd5 = currentMd5Map.get(name);
+				String servermd5 = appDto.getMd5();
+				if (!servermd5.equals(currentMd5))
+					toBeDownlaoded.add(name);
+			} else
+				toBeDownlaoded.add(name);
+		}
+		ConfigurationManager.getInstance().saveConfiguration(ConfigurationManager.getInstance().getPc());
+		return toBeDownlaoded;
+	}
+
+	private static void constructLoginFrame() {
+		EventQueue.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
 				LoginFrame frame = new LoginFrame();
 				frame.setResizable(false);
 				ViewUtils.centralizeJFrame(frame);
