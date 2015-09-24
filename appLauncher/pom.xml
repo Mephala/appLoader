@@ -9,7 +9,7 @@
    <properties>
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <assemble.output.directory>\\abmfs001\BTOrtak\538\ÇKM\Gökhan\gwrmapideskapp\lastestVersion</assemble.output.directory>
+    <assemble.output.directory>/home/gokahanabi/Desktop</assemble.output.directory>
   </properties>
   
   

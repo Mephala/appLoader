@@ -21,6 +21,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.log4j.Logger;
 
+import service.provider.client.executor.ServiceClient;
 import service.provider.common.request.SPApplicationDto;
 import service.provider.common.util.CommonUtils;
 import appLauncher.AppLoaderException;
@@ -118,8 +119,8 @@ public class LoginFrame extends JFrame {
 			for (String app : toBeDownloadedAppList) {
 				final String loaderArgs[] = new String[2];
 				loaderArgs[0] = app;
-				// args[1] = ServiceClient.getServerUrl();
-				loaderArgs[1] = "http://localhost:8082/";
+				loaderArgs[1] = ServiceClient.getServerUrl();
+//				loaderArgs[1] = "http://localhost:8080/";
 				Loader.main(loaderArgs);
 			}
 
