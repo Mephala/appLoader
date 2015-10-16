@@ -1,14 +1,19 @@
 package appLauncher.view;
 
+import java.awt.Desktop;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
@@ -60,11 +65,36 @@ public class AppSelectorFrame extends JFrame {
 		JButton btnNewButton = new JButton("Run");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String app = (String) comboBox.getSelectedItem();
+				final String app = (String) comboBox.getSelectedItem();
 				ProcessBuilder pb = new ProcessBuilder("java", "-jar", app);
 				try {
 					frame.setVisible(false);
-					Process p = pb.start();
+					final Process p = pb.start();
+					Thread loggerThread = new Thread(new Runnable() {
+
+						@Override
+						public void run() {
+							try {
+								final File logFile = new File(app + ".log");
+								if (logFile.exists())
+									logFile.delete();
+								InputStream is = p.getInputStream();
+								if (is != null) {
+									byte[] buffer = new byte[1024];
+									FileOutputStream fos = new FileOutputStream(logFile);
+									while (-1 != is.read(buffer)) {
+										fos.write(buffer);
+									}
+									is.close();
+									fos.close();
+								}
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+
+						}
+					});
+					loggerThread.start();
 					int exitValue = p.waitFor();
 					System.out.println(exitValue);
 				} catch (IOException e1) {
@@ -78,7 +108,27 @@ public class AppSelectorFrame extends JFrame {
 				}
 			}
 		});
-		btnNewButton.setBounds(159, 116, 117, 25);
+		btnNewButton.setBounds(77, 117, 117, 25);
 		contentPane.add(btnNewButton);
+
+		JButton btnNewButton_1 = new JButton("Read Logs");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					final String app = (String) comboBox.getSelectedItem();
+					File logFile = new File(app + ".log");
+					if (!logFile.exists()) {
+						JOptionPane.showMessageDialog(null, "No log file generated. Application either does not log, or has not run yet.", "No log file found.",
+								JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					Desktop.getDesktop().open(logFile);
+				} catch (Exception excp) {
+					excp.printStackTrace();
+				}
+			}
+		});
+		btnNewButton_1.setBounds(265, 117, 117, 25);
+		contentPane.add(btnNewButton_1);
 	}
 }
